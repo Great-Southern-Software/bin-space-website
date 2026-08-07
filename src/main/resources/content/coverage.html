@@ -1,0 +1,286 @@
+---
+title: "Where our bin data comes from"
+description: "Every council we cover, the document each schedule was read from, when we last checked it, and - honestly - what we still can't answer."
+layout: default
+---
+<section class="legal-page coverage-page">
+    <h1>Where our bin data comes from</h1>
+    <p class="legal-meta">Read live from our coverage API, so this page can't go stale.</p>
+
+    <p>Bin Space doesn't guess your bin night. Every schedule is read from something a
+       council actually published - an address lookup, an open data layer, or in a lot of
+       cases a PDF calendar. This page lists every council we know about, what its
+       schedule came from, and where we fall short.</p>
+
+    <p>We publish the gaps too. If we can't answer for an address, we'd rather say so
+       than show you a day we invented.</p>
+
+    <div id="cov-stats" class="cov-stats" aria-live="polite">
+        <p class="cov-loading">Loading coverage&hellip;</p>
+    </div>
+
+    <h2>The national picture</h2>
+    <p>Each shape is a local government area, coloured by whether we can answer for it.
+       The table below says the same thing in words.</p>
+
+    <div class="cov-legend" role="list">
+        <span role="listitem"><i class="cov-key cov-key-ok"></i>Covered</span>
+        <span role="listitem"><i class="cov-key cov-key-partial"></i>Partly covered</span>
+        <span role="listitem"><i class="cov-key cov-key-pending"></i>Source known, not built yet</span>
+        <span role="listitem"><i class="cov-key cov-key-none"></i>Not covered</span>
+    </div>
+
+    <div id="cov-map" class="cov-map">
+        <p class="cov-loading">Loading the map&hellip; it's a big file, so give it a moment.</p>
+    </div>
+    <p class="cov-map-note">A word of warning about this map: it's coloured by
+       <em>area</em>, and most of Australia's land is close to empty. The pale middle is
+       real - those councils genuinely aren't covered - but they're also home to very few
+       people. Counted by residents rather than square kilometres, the figure is the one
+       at the top of this page.</p>
+
+    <h2>Every council</h2>
+    <p>Search for yours. <strong>Source</strong> is the document or service the schedule
+       was read from - follow it and you'll land on the council's own page.</p>
+
+    <div class="cov-controls">
+        <label class="cov-search">
+            <span class="cov-label">Find a council</span>
+            <input type="search" id="cov-filter" placeholder="e.g. Orange, Ararat, 2800"
+                   autocomplete="off">
+        </label>
+        <label class="cov-search">
+            <span class="cov-label">Show</span>
+            <select id="cov-status">
+                <option value="">Everything</option>
+                <option value="covered">Covered only</option>
+                <option value="PARTIAL">Partly covered</option>
+                <option value="gap">Not covered yet</option>
+            </select>
+        </label>
+    </div>
+
+    <div id="cov-table" class="cov-table-wrap" aria-live="polite">
+        <p class="cov-loading">Loading councils&hellip;</p>
+    </div>
+
+    <h2>What the statuses mean</h2>
+    <dl class="cov-defs">
+        <dt>Covered</dt>
+        <dd>We can answer for addresses in this council. Some are read live from the
+            council's own lookup; others are bundled from a calendar the council
+            published, which is why the table shows when that document runs out.</dd>
+
+        <dt>Partly covered</dt>
+        <dd>We answer for some of the council but not all of it, and we know exactly
+            which part is missing - it's named in the table. This usually happens when a
+            council splits a town into collection zones but only publishes the split as
+            a picture, with no boundary anyone can read.</dd>
+
+        <dt>Source known, not built yet</dt>
+        <dd>We've found where the data lives but haven't written the connector. These
+            answer "not covered" rather than pretending to have a schedule.</dd>
+
+        <dt>Not covered</dt>
+        <dd>We haven't found a published schedule for this council yet.</dd>
+    </dl>
+
+    <h2>Something wrong?</h2>
+    <p>If your bin day looks wrong, tell us in the app - there's a
+       <em>Report a wrong schedule</em> option on your schedule screen - or email
+       <a href="mailto:support@bin-space.app">support@bin-space.app</a>. A wrong day is a
+       bug we want to fix, and reports are how we find out a council changed its
+       calendar.</p>
+
+    <p class="fine-print">Council data belongs to the councils that publish it. We read
+       their published schedules to tell residents when their bins go out, and we link
+       back to the source in every row above.</p>
+</section>
+
+<script>
+(function () {
+  // api.bin-space.app, NOT app.bin-space.app. The app host routes to the
+  // user-shell in the load balancer's url map, so /bin-schedule/... there is
+  // served by the shell and never reaches this service with an Origin - the
+  // responses come back with no CORS headers at all and a foreign origin is
+  // not rejected. Only the api host maps to bin-schedule-backend.
+  var API = 'https://api.bin-space.app';
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function fail(node, what) {
+    node.innerHTML = '';
+    node.appendChild(el('p', 'cov-error',
+      "Couldn't load " + what + " just now. Try refreshing - if it keeps happening, "
+      + 'let us know at support@bin-space.app.'));
+  }
+
+  // A council is "covered" for a resident if it answers, however it answers.
+  // OK and STALE are stored feeds; ON_DEMAND is fetched live per address.
+  var COVERED = { OK: 1, STALE: 1, ON_DEMAND: 1, ERROR: 0 };
+  function bucket(status) {
+    if (status === 'PARTIAL') return 'partial';
+    if (COVERED[status]) return 'ok';
+    if (status === 'SCRAPER_PENDING') return 'pending';
+    return 'none';
+  }
+  var LABEL = { ok: 'Covered', partial: 'Partly covered',
+                pending: 'Source known, not built yet', none: 'Not covered' };
+
+  /* ---- headline numbers ------------------------------------------------ */
+  fetch(API + '/coverage/stats').then(function (r) { return r.json(); }).then(function (s) {
+    var box = document.getElementById('cov-stats');
+    box.innerHTML = '';
+    var share = Math.round(s.coveredPopulationShare * 1000) / 10;
+    [[share + '%', 'of Australians live in a council we cover'],
+     [s.coveredCouncils.toLocaleString(), 'councils covered'],
+     [(s.coveredPopulation).toLocaleString(), 'people'],
+     [s.partiallyCoveredCouncils.toLocaleString(), 'only partly covered']
+    ].forEach(function (pair) {
+      var card = el('div', 'cov-stat');
+      card.appendChild(el('strong', null, pair[0]));
+      card.appendChild(el('span', null, pair[1]));
+      box.appendChild(card);
+    });
+  }).catch(function () { fail(document.getElementById('cov-stats'), 'the coverage numbers'); });
+
+  /* ---- the council table ----------------------------------------------- */
+  var councils = [];
+  function render() {
+    var q = (document.getElementById('cov-filter').value || '').toLowerCase().trim();
+    var want = document.getElementById('cov-status').value;
+    var wrap = document.getElementById('cov-table');
+    var rows = councils.filter(function (c) {
+      var b = bucket(c.status);
+      if (want === 'covered' && b !== 'ok') return false;
+      if (want === 'PARTIAL' && b !== 'partial') return false;
+      if (want === 'gap' && b !== 'pending' && b !== 'none') return false;
+      if (!q) return true;
+      return (c.council + ' ' + (c.state || '') + ' ' + (c.sourceType || '')).toLowerCase().indexOf(q) >= 0;
+    });
+    wrap.innerHTML = '';
+    var count = el('p', 'cov-count', rows.length.toLocaleString() + ' of '
+      + councils.length.toLocaleString() + ' councils');
+    wrap.appendChild(count);
+
+    var table = el('table', 'cov-table');
+    var thead = el('thead');
+    var hr = el('tr');
+    ['Council', 'State', 'Status', 'Source', 'What we can’t answer'].forEach(function (h) {
+      hr.appendChild(el('th', null, h));
+    });
+    thead.appendChild(hr);
+    table.appendChild(thead);
+
+    var tbody = el('tbody');
+    rows.slice(0, 600).forEach(function (c) {
+      var b = bucket(c.status);
+      var tr = el('tr');
+      tr.appendChild(el('td', 'cov-name', c.council));
+      tr.appendChild(el('td', null, c.state || ''));
+      var st = el('td');
+      var pill = el('span', 'cov-pill cov-pill-' + b, LABEL[b]);
+      st.appendChild(pill);
+      tr.appendChild(st);
+
+      var src = el('td', 'cov-source');
+      if (c.sourceUrl && /^https?:/.test(c.sourceUrl)) {
+        var a = el('a', null, c.sourceType || 'source');
+        a.href = c.sourceUrl;
+        a.rel = 'nofollow noopener';
+        src.appendChild(a);
+      } else if (c.sourceType) {
+        src.appendChild(document.createTextNode(c.sourceType));
+        if (c.sourceUrl === 'bundled') {
+          src.appendChild(el('span', 'cov-note', ' · from a published calendar'));
+        }
+      } else {
+        src.appendChild(el('span', 'cov-note', '—'));
+      }
+      tr.appendChild(src);
+
+      var gap = el('td', 'cov-gap');
+      if (c.shortfall && c.shortfall.reason) {
+        gap.appendChild(el('span', 'cov-gap-list',
+          (c.shortfall.unanswered || []).slice(0, 6).join(', ')));
+        gap.appendChild(el('span', 'cov-note', ' — ' + c.shortfall.reason));
+      } else if (b === 'pending' || b === 'none') {
+        gap.appendChild(el('span', 'cov-note', 'the whole council'));
+      } else {
+        gap.appendChild(el('span', 'cov-note', '—'));
+      }
+      tr.appendChild(gap);
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    if (rows.length > 600) {
+      wrap.appendChild(el('p', 'cov-note', 'Showing the first 600 - narrow your search to see more.'));
+    }
+  }
+
+  fetch(API + '/coverage').then(function (r) { return r.json(); }).then(function (list) {
+    councils = list.sort(function (a, b) {
+      return (a.state || '').localeCompare(b.state || '')
+          || a.council.localeCompare(b.council);
+    });
+    document.getElementById('cov-filter').addEventListener('input', render);
+    document.getElementById('cov-status').addEventListener('change', render);
+    render();
+  }).catch(function () { fail(document.getElementById('cov-table'), 'the council list'); });
+
+  /* ---- the map ----------------------------------------------------------
+     Drawn as inline SVG with a plain equirectangular projection. Australia is
+     wide and shallow, so latitude is scaled by cos(mid-latitude) to stop the
+     continent looking stretched. No mapping library: this page is static and
+     one more dependency is not worth it for an outline. */
+  function drawMap(geo) {
+    var box = document.getElementById('cov-map');
+    var minX = 112, maxX = 154, minY = -44, maxY = -9;
+    var midLat = (minY + maxY) / 2;
+    var kx = Math.cos(midLat * Math.PI / 180);
+    var W = 960, H = Math.round(W * ((maxY - minY) / ((maxX - minX) * kx)));
+    function px(lon, lat) {
+      return [((lon - minX) / (maxX - minX)) * W, ((maxY - lat) / (maxY - minY)) * H];
+    }
+    function ring(coords) {
+      var d = '';
+      for (var i = 0; i < coords.length; i++) {
+        var p = px(coords[i][0], coords[i][1]);
+        d += (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+      }
+      return d + 'Z';
+    }
+    var parts = ['<svg viewBox="0 0 ' + W + ' ' + H + '" class="cov-svg" role="img" '
+      + 'aria-label="Map of Australian local government areas coloured by bin schedule coverage">'];
+    geo.features.forEach(function (f) {
+      var councilsHere = (f.properties && f.properties.councils) || [];
+      var b = councilsHere.length ? bucket(councilsHere[0].status) : 'none';
+      var g = f.geometry;
+      if (!g) return;
+      var polys = g.type === 'MultiPolygon' ? g.coordinates : [g.coordinates];
+      var d = '';
+      polys.forEach(function (poly) { poly.forEach(function (r) { d += ring(r); }); });
+      if (!d) return;
+      parts.push('<path d="' + d + '" class="cov-area cov-area-' + b + '"><title>'
+        + (f.properties.name || '').replace(/[<&]/g, '') + ' — ' + LABEL[b] + '</title></path>');
+    });
+    parts.push('</svg>');
+    box.innerHTML = parts.join('');
+  }
+
+  // Deferred: the table is the useful part and the map is a megabyte-class
+  // document, so it must never hold up the rest of the page.
+  function loadMap() {
+    fetch(API + '/coverage/map').then(function (r) { return r.json(); })
+      .then(drawMap)
+      .catch(function () { fail(document.getElementById('cov-map'), 'the map'); });
+  }
+  if ('requestIdleCallback' in window) { requestIdleCallback(loadMap, { timeout: 3000 }); }
+  else { setTimeout(loadMap, 400); }
+})();
+</script>

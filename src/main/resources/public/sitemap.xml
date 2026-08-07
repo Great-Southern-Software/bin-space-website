@@ -3,4 +3,6 @@
   <url><loc>https://www.bin-space.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://www.bin-space.app/apps/</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://www.bin-space.app/privacy/</loc><changefreq>yearly</changefreq></url>
+  <url><loc>https://www.bin-space.app/support/</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://www.bin-space.app/coverage/</loc><changefreq>weekly</changefreq></url>
 </urlset>
