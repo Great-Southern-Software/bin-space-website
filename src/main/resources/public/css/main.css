@@ -436,3 +436,106 @@ a { color: var(--ink); }
     .waitlist-inner { grid-template-columns: 1.1fr 0.9fr; }
     .unlock-card { justify-self: end; }
 }
+
+/* ---- Coverage / provenance page ------------------------------------------ */
+/* Wider than the other legal pages: this one carries a 547-row table, and at
+   640px the source column broke mid-word ("ocapi_m yarea"). */
+.coverage-page { max-width: 1040px; }
+.coverage-page h2 { margin-top: 2.4rem; }
+.coverage-page > p { max-width: 68ch; }
+
+.cov-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: .9rem;
+    margin: 1.8rem 0 2.2rem;
+}
+.cov-stat {
+    background: var(--card);
+    border: 1px solid var(--sand);
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+}
+.cov-stat strong {
+    display: block;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 1.9rem;
+    line-height: 1.1;
+    color: var(--ink);
+}
+.cov-stat span { display: block; margin-top: .3rem; color: var(--muted); font-size: .92rem; }
+
+.cov-legend { display: flex; flex-wrap: wrap; gap: 1rem; margin: .8rem 0 1rem; font-size: .92rem; }
+.cov-legend span { display: inline-flex; align-items: center; gap: .45rem; color: var(--muted); }
+.cov-key { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.cov-key-ok { background: var(--terracotta); }
+.cov-key-partial { background: #E8B79A; }
+.cov-key-pending { background: var(--sand); }
+.cov-key-none { background: #EFECE5; border: 1px solid var(--sand); }
+
+.cov-map { margin: 0 0 .6rem; min-height: 120px; }
+.cov-map-note { color: var(--muted); font-size: .9rem; margin: 0 0 2rem; max-width: 68ch; }
+.cov-svg { width: 100%; height: auto; display: block; }
+.cov-area { stroke: var(--cream); stroke-width: .6; }
+.cov-area-ok { fill: var(--terracotta); }
+.cov-area-partial { fill: #E8B79A; }
+.cov-area-pending { fill: var(--sand); }
+.cov-area-none { fill: #EFECE5; }
+
+.cov-controls { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.2rem 0; }
+.cov-search { display: flex; flex-direction: column; gap: .3rem; flex: 1 1 220px; }
+.cov-label { font-size: .85rem; color: var(--muted); }
+.cov-search input, .cov-search select {
+    padding: .6rem .75rem;
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    font: inherit;
+    background: var(--card);
+    color: var(--ink);
+}
+
+.cov-table-wrap { overflow-x: auto; }
+.cov-count { color: var(--muted); font-size: .9rem; margin: 0 0 .6rem; }
+.cov-table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+.cov-table th, .cov-table td {
+    text-align: left;
+    padding: .6rem .7rem;
+    border-bottom: 1px solid var(--sand);
+    vertical-align: top;
+}
+.cov-table th {
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--muted);
+    white-space: nowrap;
+}
+.cov-name { font-weight: 600; }
+.cov-source { max-width: 26ch; }
+.cov-source a, .cov-source { overflow-wrap: anywhere; }
+.cov-gap { max-width: 42ch; }
+.cov-gap-list { font-weight: 500; }
+.cov-note { color: var(--muted); }
+
+.cov-pill {
+    display: inline-block;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    font-size: .8rem;
+    white-space: nowrap;
+}
+.cov-pill-ok { background: var(--terracotta); color: #fff; }
+.cov-pill-partial { background: #F6E2D6; color: var(--ink); }
+.cov-pill-pending { background: var(--sand); color: var(--ink-soft); }
+.cov-pill-none { background: #EFECE5; color: var(--muted); }
+
+.cov-defs dt { font-weight: 600; margin-top: 1rem; }
+.cov-defs dd { margin: .25rem 0 0; color: var(--muted); }
+
+.cov-loading, .cov-error { color: var(--muted); }
+.cov-error { color: var(--terracotta-deep); }
+
+@media (max-width: 640px) {
+    .cov-gap { max-width: none; }
+    .cov-table { font-size: .88rem; }
+}
