@@ -99,7 +99,12 @@ layout: default
 
 <script>
 (function () {
-  var API = 'https://app.bin-space.app/bin-schedule';
+  // api.bin-space.app, NOT app.bin-space.app. The app host routes to the
+  // user-shell in the load balancer's url map, so /bin-schedule/... there is
+  // served by the shell and never reaches this service with an Origin - the
+  // responses come back with no CORS headers at all and a foreign origin is
+  // not rejected. Only the api host maps to bin-schedule-backend.
+  var API = 'https://api.bin-space.app';
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
