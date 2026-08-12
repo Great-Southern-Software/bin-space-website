@@ -116,6 +116,11 @@ a { color: var(--ink); }
     .site-nav a { font-size: 0.88rem; }
     .btn-small { padding: 7px 13px; }
 }
+/* Secondary header links yield first on narrow screens - councils are a
+   desktop-heavy audience and keep a path via the coverage page. */
+@media (max-width: 480px) {
+    .site-nav .nav-secondary { display: none; }
+}
 .site-nav a:hover { color: #fff; }
 .site-nav a.btn-primary { color: #fff; }
 
