@@ -85,6 +85,12 @@ layout: default
         <dd>We haven't found a published schedule for this council yet.</dd>
     </dl>
 
+    <h2>Are you from a council?</h2>
+    <p>We'd love to work together - accurate data helps your residents and saves your
+       call centre. See <a href="/for-councils/">what we'd love every council to
+       publish</a>, or use the invitation on your council's row above; it already
+       names the gap we'd ask you about.</p>
+
     <h2>Something wrong?</h2>
     <p>If your bin day looks wrong, tell us in the app - there's a
        <em>Report a wrong schedule</em> option on your schedule screen - or email
@@ -117,6 +123,21 @@ layout: default
     node.appendChild(el('p', 'cov-error',
       "Couldn't load " + what + " just now. Try refreshing - if it keeps happening, "
       + 'let us know at support@bin-space.app.'));
+  }
+
+  // The useful moment for a council officer is their own row: a specific,
+  // pre-filled invitation beats a blank contact form (issue #3).
+  function councilCta(c, gapText) {
+    var wrap = el('div', 'cov-cta');
+    var a = el('a', null, 'From ' + c.council + ' council? We’d love to work together');
+    var subject = 'Council partnership - ' + c.council + (c.state ? ' (' + c.state + ')' : '');
+    var body = 'Hi Bin Space,\n\nI’m from ' + c.council
+      + (c.state ? ' (' + c.state + ')' : '') + '. I saw on your coverage page that: '
+      + gapText + '.\n\nHere’s what we can share: ';
+    a.href = 'mailto:support@bin-space.app?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+    wrap.appendChild(a);
+    return wrap;
   }
 
   // A council is "covered" for a resident if it answers, however it answers.
@@ -208,8 +229,10 @@ layout: default
         gap.appendChild(el('span', 'cov-gap-list',
           (c.shortfall.unanswered || []).slice(0, 6).join(', ')));
         gap.appendChild(el('span', 'cov-note', ' — ' + c.shortfall.reason));
+        gap.appendChild(councilCta(c, c.shortfall.reason));
       } else if (b === 'pending' || b === 'none') {
         gap.appendChild(el('span', 'cov-note', 'the whole council'));
+        gap.appendChild(councilCta(c, 'we have no readable schedule source yet'));
       } else {
         gap.appendChild(el('span', 'cov-note', '—'));
       }
