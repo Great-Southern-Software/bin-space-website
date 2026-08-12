@@ -528,6 +528,8 @@ a { color: var(--ink); }
 .cov-gap { max-width: 42ch; }
 .cov-gap-list { font-weight: 500; }
 .cov-note { color: var(--muted); }
+.cov-cta { margin-top: 4px; }
+.cov-cta a { font-size: 0.85rem; color: var(--ink); text-decoration-color: var(--sand); }
 
 .cov-pill {
     display: inline-block;
