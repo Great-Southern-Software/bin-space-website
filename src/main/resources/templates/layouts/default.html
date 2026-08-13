@@ -5,6 +5,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Before the stylesheet, and deliberately blocking: reading the stored choice
+     after first paint would flash the light page at anyone who chose dark.
+     No stored choice means no attribute, which leaves the CSS media query to
+     follow the operating system. -->
+<script>{|
+  try {
+    var t = localStorage.getItem('bs-theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) { /* private mode: fall through to the OS preference */ }
+|}</script>
 {#seo page site /}
 <link rel="icon" type="image/png" href="{site.url('/images/favicon.png')}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,6 +56,19 @@
     <nav class="site-nav" aria-label="Main">
         <a class="nav-secondary" href="{site.url('/for-councils/')}">For councils</a>
         <a href="{site.url('/apps/')}">Get the app</a>
+        <button class="theme-toggle" type="button" aria-pressed="false"
+                aria-label="Switch to dark theme">
+            <!-- The icon shows what a click would GIVE you, so only one is ever
+                 visible; which one is decided in CSS, not script, so it is
+                 right on the first frame. -->
+            <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
+            </svg>
+            <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.2"/>
+                <path d="M12 2v2.6M12 19.4V22M2 12h2.6M19.4 12H22M4.9 4.9l1.9 1.9M17.2 17.2l1.9 1.9M19.1 4.9l-1.9 1.9M6.8 17.2l-1.9 1.9"/>
+            </svg>
+        </button>
         <a class="btn btn-primary btn-small" href="https://app.bin-space.app">Sign up</a>
     </nav>
 </header>
@@ -67,5 +90,37 @@
         </nav>
     </div>
 </footer>
+<script>{|
+  (function () {
+    var root = document.documentElement;
+    var btn = document.querySelector('.theme-toggle');
+    if (!btn) return;
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // The attribute wins when it is there; otherwise the OS decides, which is
+    // also what the CSS is doing.
+    function isDark() {
+      var t = root.getAttribute('data-theme');
+      return t ? t === 'dark' : mq.matches;
+    }
+
+    function sync() {
+      var dark = isDark();
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    }
+
+    btn.addEventListener('click', function () {
+      var next = isDark() ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('bs-theme', next); } catch (e) { /* not fatal */ }
+      sync();
+    });
+
+    // Someone who has never chosen still follows the OS when it flips at dusk.
+    mq.addEventListener('change', sync);
+    sync();
+  })();
+|}</script>
 </body>
 </html>
