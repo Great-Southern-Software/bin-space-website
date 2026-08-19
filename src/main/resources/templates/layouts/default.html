@@ -21,6 +21,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{site.url('/css/main.css')}">
+{#if config:boolean('binspace.analytics.enabled')}
+{#let gaId=config:['binspace.analytics.ga-id']}
+<!-- Google Analytics 4. Disabled on the dev profile, so this whole block
+     disappears from a locally generated site and only prod ever reports. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={gaId}"></script>
+<script>{|
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+|}
+  gtag('config', '{gaId}');
+</script>
+{/let}
+{/if}
 <script type="application/ld+json">
 \{
   "@context": "https://schema.org",
