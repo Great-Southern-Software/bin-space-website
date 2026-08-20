@@ -47,3 +47,6 @@ node_modules/
 package.json
 package-lock.json
 .roq/
+
+# github-worker writes a per-PR maven.repo.local here; it must never be committed
+.mvn/maven.config
