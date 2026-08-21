@@ -30,12 +30,13 @@ layout: default
   // from the site's own "Get the app" nav link has no such flag and keeps the
   // choice - one page, two behaviours, one URL to maintain.
 
-  // TODO before any printed drop: the numeric App Store ID, from App Store
-  // Connect > App Information. It exists as soon as the app record does, even
-  // while the version is Waiting for Review. Until it is set, iOS visitors
-  // are shown the page (with the web app) rather than forwarded, because a
-  // guessed store URL is a dead end and the web app is not.
-  var APPLE_ID = null;
+  // The numeric App Store ID, from App Store Connect > App Information. It is
+  // NOT the bundle id and cannot be derived from one: apps.apple.com has no
+  // bundle-id route, and itunes.apple.com/lookup only answers for apps that
+  // are already live. Kept guarded below so that blanking this string pulls
+  // the iOS button and the iOS forward together, rather than leaving a link
+  // that 404s - a dead store link is worse than the web app.
+  var APPLE_ID = '6801016506';
 
   var PLAY = 'https://play.google.com/store/apps/details?id=app.binspace.app';
   var APPLE = APPLE_ID ? 'https://apps.apple.com/au/app/id' + APPLE_ID : null;
