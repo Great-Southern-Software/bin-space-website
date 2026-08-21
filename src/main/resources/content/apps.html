@@ -1,19 +1,83 @@
 ---
 title: "Get the app"
-description: "The Bin Space app is coming to the App Store and Google Play. Meanwhile, everything works in the web app."
+description: "Bin Space for iPhone and Android - bin night reminders, and a marketplace for the spare room in your bin."
 layout: default
 ---
 <section class="apps-page">
     <img class="app-icon" src="{site.url('/images/icon-full.png')}" alt="Bin Space app icon">
-    <h1>The Bin Space app is coming to the App&nbsp;Store and Google&nbsp;Play</h1>
-    <p class="lede">We're putting the finishing touches on it. In the meantime, the web app does
-       everything - bin nights, listings, bookings and your wallet - right in your browser,
-       on any phone.</p>
-    <div class="cta-row cta-centre">
-        <a class="btn btn-primary" href="https://app.bin-space.app">Open the web app</a>
+    <h1>Get Bin&nbsp;Space</h1>
+    <p class="lede">Bin night reminders for your exact address, and a marketplace for the spare
+       room in your bin. Free to install.</p>
+
+    <div class="store-buttons" id="store-buttons">
+        <a class="btn btn-primary store-btn" id="store-android"
+           href="https://play.google.com/store/apps/details?id=app.binspace.app">Get it on Google&nbsp;Play</a>
+        <a class="btn btn-primary store-btn" id="store-ios" href="#" hidden>Download on the App&nbsp;Store</a>
     </div>
-    <div class="store-pills" aria-hidden="true">
-        <span class="store-pill">App Store &middot; coming soon</span>
-        <span class="store-pill">Google Play &middot; coming soon</span>
-    </div>
+
+    <p class="cta-note store-alt">Or <a href="https://app.bin-space.app">open the web app</a> -
+       it does everything the app does, in any browser.</p>
+
+    <p class="store-forwarding" id="store-forwarding" hidden>Taking you to the store&hellip;</p>
 </section>
+
+<script>
+(function () {
+  // Sending a visitor to the wrong platform's store is worse than asking, so
+  // the page always renders BOTH stores and only ever promotes one. The QR
+  // codes on printed material (see marketing/letters) carry ?go=1, which is
+  // what asks this page to skip the choice and forward. A visitor arriving
+  // from the site's own "Get the app" nav link has no such flag and keeps the
+  // choice - one page, two behaviours, one URL to maintain.
+
+  // TODO before any printed drop: the numeric App Store ID, from App Store
+  // Connect > App Information. It exists as soon as the app record does, even
+  // while the version is Waiting for Review. Until it is set, iOS visitors
+  // are shown the page (with the web app) rather than forwarded, because a
+  // guessed store URL is a dead end and the web app is not.
+  var APPLE_ID = null;
+
+  var PLAY = 'https://play.google.com/store/apps/details?id=app.binspace.app';
+  var APPLE = APPLE_ID ? 'https://apps.apple.com/au/app/id' + APPLE_ID : null;
+
+  var ua = navigator.userAgent || '';
+  // iPadOS 13+ reports itself as a Mac; the touch-point count is what still
+  // separates an iPad from a desktop Safari.
+  var isIos = /iPad|iPhone|iPod/.test(ua)
+      || (/Macintosh/.test(ua) && typeof document.ontouchend !== 'undefined');
+  var isAndroid = /Android/.test(ua);
+
+  var iosBtn = document.getElementById('store-ios');
+  var androidBtn = document.getElementById('store-android');
+
+  if (APPLE) {
+    iosBtn.href = APPLE;
+    iosBtn.hidden = false;
+  } else {
+    iosBtn.remove();
+  }
+
+  // Promote the platform we are fairly sure about; the other stays a plain
+  // button rather than disappearing, because sniffing is a guess.
+  if (isIos && APPLE) {
+    androidBtn.className = 'btn btn-ghost store-btn';
+    document.getElementById('store-buttons').insertBefore(iosBtn, androidBtn);
+  } else if (isAndroid) {
+    if (APPLE) iosBtn.className = 'btn btn-ghost store-btn';
+  }
+
+  // Forward only when asked, only when we know where to, and only once - a
+  // location.replace keeps the store off the back button, so returning to the
+  // page does not bounce the visitor straight back out again.
+  var wantsForward = /[?&]go=1(&|$)/.test(location.search);
+  var target = isAndroid ? PLAY : (isIos ? APPLE : null);
+
+  if (wantsForward && target) {
+    document.getElementById('store-forwarding').hidden = false;
+    // A beat, so an analytics beacon has a chance to leave and so the page is
+    // visibly Bin Space for a moment rather than a blank flash between the
+    // camera app and the store.
+    setTimeout(function () { location.replace(target); }, 400);
+  }
+})();
+</script>
