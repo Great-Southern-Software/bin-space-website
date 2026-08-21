@@ -45,7 +45,7 @@ layout: default
   // iPadOS 13+ reports itself as a Mac; the touch-point count is what still
   // separates an iPad from a desktop Safari.
   var isIos = /iPad|iPhone|iPod/.test(ua)
-      || (/Macintosh/.test(ua) && typeof document.ontouchend !== 'undefined');
+      || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
   var isAndroid = /Android/.test(ua);
 
   var iosBtn = document.getElementById('store-ios');
@@ -64,6 +64,11 @@ layout: default
     androidBtn.className = 'btn btn-ghost store-btn';
     document.getElementById('store-buttons').insertBefore(iosBtn, androidBtn);
   } else if (isAndroid) {
+    if (APPLE) iosBtn.className = 'btn btn-ghost store-btn';
+  } else {
+    // Platform we can't identify (desktop, an in-app scanner browser, etc.):
+    // don't promote either store, matching the "never guessed at" forwarding.
+    androidBtn.className = 'btn btn-ghost store-btn';
     if (APPLE) iosBtn.className = 'btn btn-ghost store-btn';
   }
 
