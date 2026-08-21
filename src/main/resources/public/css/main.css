@@ -1,130 +1,17 @@
 /* Bin Space - marketing site. One sheet, mobile-first. */
 
-/* The palette is split by ROLE, not by colour name. The old --ink did two
-   different jobs - body text, and the deliberately-dark bands (header, waitlist,
-   chips) - which are the same charcoal in light and opposites in dark. Keeping
-   them as one variable would have painted dark-mode text the colour of the
-   header. --text and --hero are those two jobs, separated. */
 :root {
-    color-scheme: light;
-
-    /* Bin lids are the same in both themes: a red lid is a fact about the bin,
-       not a decision about the page. */
+    --ink: #0E1116;
+    --ink-soft: #1A1F26;
+    --cream: #F4F1EA;
+    --sand: #E2DDD2;
+    --terracotta: #D97757;
+    --terracotta-deep: #C4633F;
+    --muted: #6B6F76;
+    --card: #FFFFFF;
     --lid-red: #D64B41;
     --lid-yellow: #F2B23A;
     --lid-green: #5AA24E;
-
-    --bg: #F4F1EA;            /* the page - warm paper */
-    --text: #0E1116;          /* body copy */
-    --muted: #6B6F76;         /* secondary copy */
-    --card: #FFFFFF;          /* anything raised off the page */
-    --line: #E2DDD2;          /* hairlines and borders */
-    /* A fill sunk INTO a card: the bin pills and the unlock trough. Cream in
-       light, which is what those two were before, so light is unchanged. */
-    --tint: #F4F1EA;
-
-    /* The bands that are charcoal on purpose. */
-    --hero: #0E1116;
-    --hero-soft: #1A1F26;
-    --on-hero: #FFFFFF;
-    --on-hero-dim: rgba(244, 241, 234, .75);
-    --on-hero-faint: rgba(244, 241, 234, .6);
-
-    --terracotta: #D97757;
-    --terracotta-deep: #C4633F;
-    --on-terracotta: #FFFFFF;
-    --clay-mid: #E8B79A;      /* the half-covered state on the coverage map */
-    --clay-tint: #F6E2D6;
-
-    /* The coverage map's two "we can't answer" greys. Their own variables, not
-       --line/--tint: those are a hairline and the quietest possible fill, and
-       reusing them in dark collapsed "source known" and "not covered" into two
-       near-blacks, indistinguishable from each other AND from the page. On the
-       map these are data, and have to be told apart. */
-    --cov-pending: #E2DDD2;
-    --cov-none: #EFECE5;
-    --on-cov-pending: #1A1F26;
-    --on-cov-none: #6B6F76;
-
-    --shadow-card: 0 12px 32px rgba(14, 17, 22, .07);
-    --shadow-icon: 0 12px 32px rgba(14, 17, 22, .18);
-    --shadow-lift: 0 16px 44px rgba(0, 0, 0, .35);
-}
-
-/* Dark, in the same shape the app uses: light separates the header from the
-   page by contrast (charcoal on cream), which a charcoal header on a charcoal
-   page cannot do. So the page drops to near-black and everything above it is
-   LIFTED - header, cards, chips - and separation comes from elevation instead.
-
-   Declared twice on purpose. The media block serves a visitor who has never
-   touched the toggle (including with JS off); the attribute block serves one
-   who has, and has to win over the media query in both directions. */
-@media (prefers-color-scheme: dark) {
-/* Indented as the rule below it, not nested, so the two dark blocks are
-   byte-identical apart from their selector. They have to stay in step. */
-:root:not([data-theme="light"]) {
-    color-scheme: dark;
-
-    --bg: #0A0C0F;
-    --text: #E8E6E1;
-    --muted: #9BA1A8;
-    --card: #14181E;
-    --line: #2A3037;
-    --tint: #1F242B;
-
-    --hero: #283039;
-    --hero-soft: #1F242B;
-    --on-hero: #F4F1EA;
-    --on-hero-dim: rgba(244, 241, 234, .75);
-    --on-hero-faint: rgba(244, 241, 234, .6);
-
-    --terracotta: #E08A6D;
-    --terracotta-deep: #EFA184;
-    --on-terracotta: #241009;
-    --clay-mid: #8A5540;
-    --clay-tint: #2A1A14;
-
-    --cov-pending: #454D57;
-    --cov-none: #262C34;
-    --on-cov-pending: #E8E6E1;
-    --on-cov-none: #9BA1A8;
-
-    --shadow-card: 0 12px 32px rgba(0, 0, 0, .5);
-    --shadow-icon: 0 12px 32px rgba(0, 0, 0, .6);
-    --shadow-lift: 0 16px 44px rgba(0, 0, 0, .6);
-}
-}
-
-:root[data-theme="dark"] {
-    color-scheme: dark;
-
-    --bg: #0A0C0F;
-    --text: #E8E6E1;
-    --muted: #9BA1A8;
-    --card: #14181E;
-    --line: #2A3037;
-    --tint: #1F242B;
-
-    --hero: #283039;
-    --hero-soft: #1F242B;
-    --on-hero: #F4F1EA;
-    --on-hero-dim: rgba(244, 241, 234, .75);
-    --on-hero-faint: rgba(244, 241, 234, .6);
-
-    --terracotta: #E08A6D;
-    --terracotta-deep: #EFA184;
-    --on-terracotta: #241009;
-    --clay-mid: #8A5540;
-    --clay-tint: #2A1A14;
-
-    --cov-pending: #454D57;
-    --cov-none: #262C34;
-    --on-cov-pending: #E8E6E1;
-    --on-cov-none: #9BA1A8;
-
-    --shadow-card: 0 12px 32px rgba(0, 0, 0, .5);
-    --shadow-icon: 0 12px 32px rgba(0, 0, 0, .6);
-    --shadow-lift: 0 16px 44px rgba(0, 0, 0, .6);
 }
 
 * { box-sizing: border-box; }
@@ -132,8 +19,8 @@
 html, body {
     margin: 0;
     padding: 0;
-    background: var(--bg);
-    color: var(--text);
+    background: var(--cream);
+    color: var(--ink);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.55;
 }
@@ -147,7 +34,7 @@ h1, h2, h3 {
     margin: 0;
 }
 
-a { color: var(--text); }
+a { color: var(--ink); }
 
 :focus-visible {
     outline: 3px solid var(--terracotta);
@@ -168,15 +55,15 @@ a { color: var(--text); }
 }
 .btn-primary {
     background: var(--terracotta);
-    color: var(--on-terracotta);
+    color: #fff;
 }
 .btn-primary:hover { background: var(--terracotta-deep); }
 .btn-ghost {
     background: transparent;
-    color: var(--text);
-    border: 1px solid var(--text);
+    color: var(--ink);
+    border: 1px solid var(--ink);
 }
-.btn-ghost:hover { background: var(--card); }
+.btn-ghost:hover { background: #fff; }
 .btn-small { padding: 8px 18px; font-size: 0.92rem; border-radius: 10px; }
 
 .cta-row {
@@ -195,8 +82,8 @@ a { color: var(--text); }
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    background: var(--hero);
-    color: var(--on-hero);
+    background: var(--ink);
+    color: #fff;
     padding: 12px clamp(20px, 5vw, 48px);
 }
 .brand-lockup {
@@ -204,7 +91,7 @@ a { color: var(--text); }
     align-items: center;
     gap: 12px;
     text-decoration: none;
-    color: var(--on-hero);
+    color: #fff;
 }
 .brand-logo { width: 28px; height: 28px; display: block; }
 .brand-name {
@@ -219,61 +106,18 @@ a { color: var(--text); }
     gap: clamp(12px, 3vw, 20px);
 }
 .site-nav a {
-    color: var(--on-hero-dim);
+    color: rgba(255,255,255,.8);
     text-decoration: none;
     font-size: 0.95rem;
     white-space: nowrap;
 }
-/* --- theme toggle --- */
-.theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    background: transparent;
-    border: 1px solid rgba(244, 241, 234, .28);
-    border-radius: 10px;
-    color: var(--on-hero-dim);
-    cursor: pointer;
-    transition: color .15s ease, border-color .15s ease;
-}
-.theme-toggle:hover {
-    color: var(--on-hero);
-    border-color: rgba(244, 241, 234, .55);
-}
-.theme-toggle .icon {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-}
-/* Show the theme a click would GIVE you. Decided here rather than in script so
-   it is correct on the first frame, and mirrors the palette's two dark blocks. */
-.theme-toggle .icon-sun { display: none; }
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
-    :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
-}
-:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
-:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
-
 @media (max-width: 420px) {
     .brand-name { font-size: 1rem; }
-    .theme-toggle { width: 30px; height: 30px; }
     .site-nav a { font-size: 0.88rem; }
     .btn-small { padding: 7px 13px; }
 }
-/* Secondary header links yield first on narrow screens - councils are a
-   desktop-heavy audience and keep a path via the coverage page. */
-@media (max-width: 480px) {
-    .site-nav .nav-secondary { display: none; }
-}
-.site-nav a:hover { color: var(--on-hero); }
-.site-nav a.btn-primary { color: var(--on-terracotta); }
+.site-nav a:hover { color: #fff; }
+.site-nav a.btn-primary { color: #fff; }
 
 /* --- hero --- */
 .hero {
@@ -320,10 +164,10 @@ a { color: var(--text); }
 }
 .mock-card {
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 1px solid var(--sand);
     border-radius: 18px;
     padding: 18px 20px;
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 12px 32px rgba(14,17,22,.07);
 }
 .mock-schedule {
     display: flex;
@@ -364,8 +208,8 @@ a { color: var(--text); }
     align-items: center;
     gap: 7px;
     font-size: 0.84rem;
-    background: var(--tint);
-    border: 1px solid var(--line);
+    background: var(--cream);
+    border: 1px solid var(--sand);
     border-radius: 999px;
     padding: 5px 12px 5px 9px;
 }
@@ -388,8 +232,8 @@ a { color: var(--text); }
 }
 .mock-chip {
     align-self: flex-end;
-    background: var(--hero);
-    color: var(--on-hero);
+    background: var(--ink);
+    color: var(--cream);
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 600;
     font-size: 0.85rem;
@@ -403,7 +247,7 @@ a { color: var(--text); }
     max-width: 1080px;
     margin: 0 auto;
     padding: clamp(32px, 5vw, 64px) 20px;
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--sand);
 }
 .how h2, .waitlist h2 {
     font-size: clamp(1.5rem, 3.4vw, 2.1rem);
@@ -417,7 +261,7 @@ a { color: var(--text); }
 }
 .how-card {
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 1px solid var(--sand);
     border-radius: 16px;
     padding: 22px;
 }
@@ -431,7 +275,7 @@ a { color: var(--text); }
 .lid-red { background: var(--lid-red); }
 .lid-yellow { background: var(--lid-yellow); }
 .lid-green { background: var(--lid-green); }
-.lid-ink { background: var(--hero); }
+.lid-ink { background: var(--ink); }
 .how-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
 .how-card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
 .fine-print {
@@ -443,8 +287,8 @@ a { color: var(--text); }
 
 /* --- waitlist band --- */
 .waitlist {
-    background: var(--hero);
-    color: var(--on-hero);
+    background: var(--ink);
+    color: var(--cream);
 }
 .waitlist-inner {
     display: grid;
@@ -455,12 +299,12 @@ a { color: var(--text); }
     margin: 0 auto;
     padding: clamp(48px, 7vw, 88px) 20px;
 }
-.waitlist h2 { color: var(--on-hero); }
-.waitlist p { color: var(--on-hero-dim); max-width: 36em; }
-.waitlist .cta-note { color: var(--on-hero-faint); }
+.waitlist h2 { color: #fff; }
+.waitlist p { color: rgba(244,241,234,.75); max-width: 36em; }
+.waitlist .cta-note { color: rgba(244,241,234,.6); }
 .unlock-card {
     background: var(--card);
-    color: var(--text);
+    color: var(--ink);
     border-radius: 18px;
     padding: 24px;
     max-width: 380px;
@@ -469,7 +313,7 @@ a { color: var(--text); }
     flex-direction: column;
     gap: 8px;
     justify-self: center;
-    box-shadow: var(--shadow-lift);
+    box-shadow: 0 16px 44px rgba(0,0,0,.35);
 }
 .unlock-label {
     font-family: 'Space Grotesk', sans-serif;
@@ -484,8 +328,8 @@ a { color: var(--text); }
     font-size: 1.3rem;
 }
 .unlock-bar {
-    background: var(--tint);
-    border: 1px solid var(--line);
+    background: var(--cream);
+    border: 1px solid var(--sand);
     border-radius: 999px;
     height: 14px;
     overflow: hidden;
@@ -521,7 +365,7 @@ a { color: var(--text); }
     width: 96px;
     height: 96px;
     border-radius: 22px;
-    box-shadow: var(--shadow-icon);
+    box-shadow: 0 12px 32px rgba(14,17,22,.18);
     margin-bottom: 28px;
 }
 .apps-page h1 {
@@ -529,20 +373,21 @@ a { color: var(--text); }
     letter-spacing: -0.3px;
 }
 .apps-page .lede { margin: 18px auto 0; }
-.store-pills {
+.store-buttons {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     margin-top: 32px;
 }
-.store-pill {
-    font-size: 0.85rem;
+/* Both stores are always offered, so neither button may look like the only
+   one: they share a width and differ by fill, not by size. */
+.store-btn { min-width: 232px; }
+.store-alt { margin-top: 20px; }
+.store-forwarding {
+    margin-top: 18px;
+    font-size: 0.9rem;
     color: var(--muted);
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 8px 16px;
 }
 
 /* --- legal pages --- */
@@ -554,95 +399,13 @@ a { color: var(--text); }
 .legal-page h1 { font-size: clamp(1.6rem, 4.4vw, 2.2rem); letter-spacing: -0.3px; }
 .legal-meta { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
 .legal-page h2 { font-size: 1.15rem; margin: 36px 0 10px; }
-.legal-page h3 { font-size: 1rem; margin: 26px 0 8px; }
 .legal-page p, .legal-page li { line-height: 1.65; }
 .legal-page ul { padding-left: 22px; }
 .legal-page li { margin-bottom: 10px; }
 
-/* --- for councils: the official-app mock ---------------------------------- */
-/* Two panels of the same idea - the logo on the schedule, and the page behind
-   it - so they sit side by side once there is room and stack before they get
-   too narrow to read. */
-.council-mock {
-    display: grid;
-    gap: 14px;
-    margin: 22px 0 10px;
-}
-@media (min-width: 560px) {
-    .council-mock { grid-template-columns: 1fr 1fr; align-items: start; }
-}
-.council-mock .mock-card { padding: 16px; }
-.council-mock-schedule {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px 14px;
-    align-items: center;
-}
-.council-mock-schedule .mock-bins { gap: 6px; }
-.council-mock-schedule .bin-pill { font-size: 0.78rem; padding: 4px 10px 4px 8px; }
-
-/* The strip is the whole pitch: it reads as part of the schedule, not as an ad
-   pasted over it, so it sits inside the card above its own hairline. */
-.council-strip {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-top: 1px solid var(--line);
-    padding-top: 12px;
-}
-.council-logo-slot {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 38px;
-    height: 38px;
-    flex: none;
-    border-radius: 9px;
-    border: 1px dashed var(--line);
-    background: var(--tint);
-    color: var(--muted);
-    font-size: 0.6rem;
-    line-height: 1.15;
-    padding: 3px;
-}
-.council-logo-lg { width: 46px; height: 46px; font-size: 0.64rem; margin-bottom: 10px; }
-.council-strip-text { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
-.council-strip-text strong { font-size: 0.88rem; }
-.council-strip-text small { font-size: 0.76rem; color: var(--muted); }
-.council-chev { margin-left: auto; color: var(--muted); font-size: 1.2rem; }
-
-.council-mock-page { display: flex; flex-direction: column; }
-.council-page-name { font-size: 0.95rem; }
-.council-page-blurb {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin: 4px 0 12px;
-}
-/* Typed as ul.* on purpose: .legal-page ul sets the bullet indent, and would
-   otherwise out-specify a bare class here. */
-ul.council-link-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-ul.council-link-list li {
-    font-size: 0.8rem;
-    background: var(--tint);
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    padding: 8px 10px;
-    margin: 0;
-}
-.council-mock-caption { font-size: 0.88rem; color: var(--muted); }
-
 /* --- footer --- */
 .site-footer {
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--sand);
     padding: 28px clamp(20px, 5vw, 48px);
 }
 .footer-inner {
@@ -657,7 +420,7 @@ ul.council-link-list li {
     text-align: center;
 }
 .footer-brand { display: flex; align-items: center; gap: 10px; color: var(--muted); text-decoration: none; }
-.footer-brand:hover { color: var(--text); text-decoration: underline; }
+.footer-brand:hover { color: var(--ink); text-decoration: underline; }
 .footer-mark { width: 26px; height: 26px; border-radius: 7px; }
 .footer-links {
     display: flex;
@@ -666,7 +429,7 @@ ul.council-link-list li {
     gap: 10px 22px;
 }
 .footer-links a { color: var(--muted); text-decoration: none; }
-.footer-links a:hover { color: var(--text); text-decoration: underline; }
+.footer-links a:hover { color: var(--ink); text-decoration: underline; }
 
 /* --- larger screens --- */
 @media (min-width: 640px) {
@@ -702,7 +465,7 @@ ul.council-link-list li {
 }
 .cov-stat {
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 1px solid var(--sand);
     border-radius: 14px;
     padding: 1rem 1.1rem;
 }
@@ -711,7 +474,7 @@ ul.council-link-list li {
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-size: 1.9rem;
     line-height: 1.1;
-    color: var(--text);
+    color: var(--ink);
 }
 .cov-stat span { display: block; margin-top: .3rem; color: var(--muted); font-size: .92rem; }
 
@@ -719,29 +482,29 @@ ul.council-link-list li {
 .cov-legend span { display: inline-flex; align-items: center; gap: .45rem; color: var(--muted); }
 .cov-key { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
 .cov-key-ok { background: var(--terracotta); }
-.cov-key-partial { background: var(--clay-mid); }
-.cov-key-pending { background: var(--cov-pending); }
-.cov-key-none { background: var(--cov-none); border: 1px solid var(--line); }
+.cov-key-partial { background: #E8B79A; }
+.cov-key-pending { background: var(--sand); }
+.cov-key-none { background: #EFECE5; border: 1px solid var(--sand); }
 
 .cov-map { margin: 0 0 .6rem; min-height: 120px; }
 .cov-map-note { color: var(--muted); font-size: .9rem; margin: 0 0 2rem; max-width: 68ch; }
 .cov-svg { width: 100%; height: auto; display: block; }
-.cov-area { stroke: var(--bg); stroke-width: .6; }
+.cov-area { stroke: var(--cream); stroke-width: .6; }
 .cov-area-ok { fill: var(--terracotta); }
-.cov-area-partial { fill: var(--clay-mid); }
-.cov-area-pending { fill: var(--cov-pending); }
-.cov-area-none { fill: var(--cov-none); }
+.cov-area-partial { fill: #E8B79A; }
+.cov-area-pending { fill: var(--sand); }
+.cov-area-none { fill: #EFECE5; }
 
 .cov-controls { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.2rem 0; }
 .cov-search { display: flex; flex-direction: column; gap: .3rem; flex: 1 1 220px; }
 .cov-label { font-size: .85rem; color: var(--muted); }
 .cov-search input, .cov-search select {
     padding: .6rem .75rem;
-    border: 1px solid var(--line);
+    border: 1px solid var(--sand);
     border-radius: 10px;
     font: inherit;
     background: var(--card);
-    color: var(--text);
+    color: var(--ink);
 }
 
 .cov-table-wrap { overflow-x: auto; }
@@ -750,7 +513,7 @@ ul.council-link-list li {
 .cov-table th, .cov-table td {
     text-align: left;
     padding: .6rem .7rem;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--sand);
     vertical-align: top;
 }
 .cov-table th {
@@ -766,8 +529,6 @@ ul.council-link-list li {
 .cov-gap { max-width: 42ch; }
 .cov-gap-list { font-weight: 500; }
 .cov-note { color: var(--muted); }
-.cov-cta { margin-top: 4px; }
-.cov-cta a { font-size: 0.85rem; color: var(--text); text-decoration-color: var(--line); }
 
 .cov-pill {
     display: inline-block;
@@ -776,10 +537,10 @@ ul.council-link-list li {
     font-size: .8rem;
     white-space: nowrap;
 }
-.cov-pill-ok { background: var(--terracotta); color: var(--on-terracotta); }
-.cov-pill-partial { background: var(--clay-tint); color: var(--text); }
-.cov-pill-pending { background: var(--cov-pending); color: var(--on-cov-pending); }
-.cov-pill-none { background: var(--cov-none); color: var(--on-cov-none); }
+.cov-pill-ok { background: var(--terracotta); color: #fff; }
+.cov-pill-partial { background: #F6E2D6; color: var(--ink); }
+.cov-pill-pending { background: var(--sand); color: var(--ink-soft); }
+.cov-pill-none { background: #EFECE5; color: var(--muted); }
 
 .cov-defs dt { font-weight: 600; margin-top: 1rem; }
 .cov-defs dd { margin: .25rem 0 0; color: var(--muted); }
