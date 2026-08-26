@@ -294,10 +294,13 @@ a { color: var(--text); }
     .site-nav a { font-size: 0.88rem; }
     .btn-small { padding: 7px 13px; }
 }
-/* Secondary header links yield first on narrow screens - councils are a
-   desktop-heavy audience and keep a path via the coverage page. */
-@media (max-width: 480px) {
-    .site-nav .nav-secondary { display: none; }
+/* A phone promotes the app in the hero, not the header, so the whole nav goes
+   and the header keeps only the brand and the theme toggle - the four items it
+   used to carry never fitted across a phone anyway. Nothing is lost: the app
+   lives on the hero button and in the footer, and councils - a desktop-heavy
+   audience - keep a path via the footer and the coverage page. */
+@media (max-width: 640px) {
+    .site-nav a { display: none; }
 }
 .site-nav a:hover { color: var(--on-hero); }
 .site-nav a.btn-primary { color: var(--on-terracotta); }
@@ -333,6 +336,25 @@ a { color: var(--text); }
     font-size: 1.08rem;
     max-width: 34em;
     margin: 20px 0 0;
+}
+
+/* One hero label per viewport: a wide screen sells the bin-night feature, a
+   phone sells the app itself. Only ever one of the two is displayed, so only
+   one reaches the accessibility tree. */
+.cta-label-narrow { display: none; }
+@media (max-width: 640px) {
+    .cta-label-wide { display: none; }
+    .cta-label-narrow { display: inline; }
+    /* Phones get one call to action and no alternative to weigh it against:
+       the browser link goes and the app button takes the whole row. */
+    .hero .cta-browser { display: none; }
+    .hero .cta-row .btn-primary {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-size: 1.15rem;
+        padding: 17px 26px;
+    }
 }
 
 /* hero art: composed product-card cluster (decorative) */
