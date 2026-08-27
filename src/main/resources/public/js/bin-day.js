@@ -182,29 +182,66 @@
       return r.json().then(function (body) { return { ok: r.ok, body: body }; });
     }).then(function (res) {
       if (res.ok) showSchedule(res.body, row);
-      else showError(res.body);
+      else showError(res.body, row);
     }).catch(function () {
       say('binday-error', 'We could not reach the schedule service just now. Try again in '
         + 'a moment - if it keeps happening, let us know at support@bin-space.app.');
     });
   }
 
-  var MESSAGES = {
-    NOT_COVERED: 'We do not have a schedule for that address yet. Our '
-      + 'coverage page lists every council we know about, including the gaps.',
-    ADDRESS_NOT_FOUND: 'We could not find that address. Try picking it from the list '
-      + 'rather than typing it in full.',
-    AMBIGUOUS_ADDRESS: 'That address matched more than one property. Pick yours from the '
-      + 'list of suggestions.',
-    SOURCE_UNAVAILABLE: 'The council’s own schedule service is not answering right '
-      + 'now. This is usually temporary - please try again shortly.'
-  };
+  // The only way to reach a lookup is by clicking a suggestion, so none of
+  // these may blame the visitor's typing. ADDRESS_NOT_FOUND in particular used
+  // to say "try picking it from the list rather than typing it in full", which
+  // is advice for a thing they cannot have done.
+  //
+  // It means the address service offered a property the council's own schedule
+  // does not carry. Sometimes the council is right - a CBD tower on a
+  // commercial service has no kerbside collection at all - and sometimes it is
+  // a gap on our side. We cannot tell which from here, so the message says so
+  // and offers the one useful next step.
+  function messageFor(code) {
+    var council = pageCouncil || 'This council';
+    switch (code) {
+      case 'NOT_COVERED':
+        return 'We do not have a schedule for that address yet. Our coverage page '
+          + 'lists every council we know about, including the gaps.';
+      case 'ADDRESS_NOT_FOUND':
+        return council + '’s schedule does not list that address. That is sometimes '
+          + 'correct - not every property is on a kerbside run - and sometimes it is a '
+          + 'gap on our side. If your bins do go out, tell us and we will look.';
+      case 'AMBIGUOUS_ADDRESS':
+        return council + '’s schedule has more than one entry for that address and we '
+          + 'cannot tell which one is yours. We would rather ask than guess your bin '
+          + 'day.';
+      case 'SOURCE_UNAVAILABLE':
+        return 'The council’s own schedule service is not answering right now. This is '
+          + 'usually temporary - please try again shortly.';
+      default:
+        return null;
+    }
+  }
 
-  function showError(body) {
+  // A dead end is the most useful moment to hear from someone: they have an
+  // address we cannot answer for, which is exactly what we need to fix it.
+  function reportLink(row) {
+    var subject = 'Bin day lookup - ' + (pageCouncil || 'unknown council');
+    var body = 'Hi Bin Space,\n\nThe bin day page for '
+      + (pageCouncil || 'this council') + ' could not answer for:\n\n'
+      + (row && row.label ? row.label : '(address)')
+      + '\n\nMy bins do go out. Here is the day, if I know it: ';
+    var a = el('a', null, 'Tell us about this address');
+    a.href = 'mailto:support@bin-space.app?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+    var p = el('p');
+    p.appendChild(a);
+    return p;
+  }
+
+  function showError(body, row) {
     var code = body && body.error;
     clear(result);
     result.appendChild(el('p', 'binday-error',
-      MESSAGES[code] || (body && body.message)
+      messageFor(code) || (body && body.message)
         || 'Something went wrong looking that up. Please try again.'));
     if (code === 'NOT_COVERED') {
       var p = el('p');
@@ -212,6 +249,8 @@
       a.href = '/coverage/';
       p.appendChild(a);
       result.appendChild(p);
+    } else if (code === 'ADDRESS_NOT_FOUND' || code === 'AMBIGUOUS_ADDRESS') {
+      result.appendChild(reportLink(row));
     }
   }
 
