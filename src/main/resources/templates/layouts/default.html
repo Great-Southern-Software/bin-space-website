@@ -97,6 +97,10 @@
         </a>
         <nav class="footer-links" aria-label="Footer">
             <a href="{site.url('/apps/')}">Get the app</a>
+            <!-- Shown only where the header has dropped its nav; the two rules
+                 share a breakpoint, so the link is visible in exactly one of
+                 the two places at any width. -->
+            <a class="footer-councils" href="{site.url('/for-councils/')}">For councils</a>
             <a href="https://app.bin-space.app/terms/">Terms &amp; Conditions</a>
             <a href="{site.url('/privacy/')}">Privacy</a>
             <a href="{site.url('/coverage/')}">Coverage &amp; data sources</a>
