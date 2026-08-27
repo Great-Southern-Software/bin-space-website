@@ -13,6 +13,11 @@
     --lid-red: #D64B41;
     --lid-yellow: #F2B23A;
     --lid-green: #5AA24E;
+    /* The other three the schedule API can return: a separate paper stream, a
+       glass bin, and the fallback for a bin whose name we could not classify. */
+    --lid-blue: #3D7BC4;
+    --lid-purple: #8A5FBF;
+    --lid-grey: #8B9099;
 
     --bg: #F4F1EA;            /* the page - warm paper */
     --text: #0E1116;          /* body copy */
@@ -422,6 +427,9 @@ a { color: var(--text); }
 .dot-red { background: var(--lid-red); }
 .dot-yellow { background: var(--lid-yellow); }
 .dot-green { background: var(--lid-green); }
+.dot-blue { background: var(--lid-blue); }
+.dot-purple { background: var(--lid-purple); }
+.dot-grey { background: var(--lid-grey); }
 .mock-listing {
     display: flex;
     align-items: center;
@@ -752,4 +760,132 @@ a { color: var(--text); }
 @media (max-width: 640px) {
     .cov-gap { max-width: none; }
     .cov-table { font-size: .88rem; }
+}
+
+/* --- bin day pages (/bin-day/...) --- */
+.binday-page { max-width: 680px; }
+
+.binday-lookup {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: clamp(18px, 4vw, 26px);
+    margin: 28px 0;
+    box-shadow: var(--shadow-card);
+}
+.binday-lookup h2 { margin-top: 0; }
+
+.binday-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+}
+.binday-field { flex: 1 1 110px; }
+.binday-field-wide { flex: 3 1 220px; }
+.binday-field input {
+    width: 100%;
+    margin-top: 5px;
+    padding: 11px 13px;
+    font: inherit;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+.binday-field input:focus-visible {
+    outline: 2px solid var(--terracotta);
+    outline-offset: 1px;
+}
+.binday-field input:disabled { opacity: .55; cursor: not-allowed; }
+
+.binday-help { color: var(--muted); font-size: .86rem; margin: 10px 0 0; }
+
+.binday-suggestions {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.binday-suggestions li + li { border-top: 1px solid var(--line); }
+.binday-suggestion button {
+    display: block;
+    width: 100%;
+    padding: 11px 13px;
+    font: inherit;
+    text-align: left;
+    color: var(--text);
+    background: var(--card);
+    border: 0;
+    cursor: pointer;
+}
+.binday-suggestion button:hover,
+.binday-suggestion button:focus-visible { background: var(--tint); }
+
+.binday-result:not(:empty) { margin-top: 20px; }
+.binday-answer-head { font-size: 1.05rem; margin: 0 0 12px; }
+.binday-day {
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+}
+.binday-day strong { display: block; margin-bottom: 8px; }
+.binday-bins { display: flex; flex-wrap: wrap; gap: 8px; }
+.binday-loading { color: var(--muted); }
+.binday-error { color: var(--terracotta-deep); }
+.binday-note {
+    color: var(--muted);
+    font-size: .88rem;
+    margin: 14px 0 0;
+}
+
+.binday-app {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    background: var(--tint);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: clamp(18px, 4vw, 24px);
+    margin: 32px 0;
+}
+.binday-app h2 { margin-top: 0; }
+.binday-app p:last-child { margin-bottom: 0; }
+.binday-app-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+    flex: none;
+}
+@media (max-width: 520px) {
+    .binday-app { flex-direction: column; gap: 14px; }
+}
+
+/* Wider than the other prose pages: this one is a grid of councils, and at the
+   640px reading measure it can only ever be two columns wide. */
+.binday-index { max-width: 900px; }
+
+.binday-index-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+.binday-index-list a {
+    display: block;
+    padding: 11px 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    text-decoration: none;
+    color: var(--text);
+}
+.binday-index-list a:hover { background: var(--tint); }
+.binday-index-list span {
+    display: block;
+    color: var(--muted);
+    font-size: .82rem;
 }
