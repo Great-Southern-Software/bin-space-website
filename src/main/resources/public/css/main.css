@@ -620,6 +620,16 @@ a { color: var(--text); }
 .footer-links a { color: var(--muted); text-decoration: none; }
 .footer-links a:hover { color: var(--text); text-decoration: underline; }
 
+/* "For councils" belongs in the header, and lives there on anything wide
+   enough to hold it. Below the breakpoint where the header nav goes, the
+   footer picks it up, so the page always offers it exactly once and never
+   twice. Keyed on the same 640px as that rule rather than on
+   orientation: portrait, so a phone turned sideways still has the link. */
+.footer-councils { display: none; }
+@media (max-width: 640px) {
+    .footer-councils { display: block; }
+}
+
 /* --- larger screens --- */
 @media (min-width: 640px) {
     .how-grid { grid-template-columns: 1fr 1fr; }
