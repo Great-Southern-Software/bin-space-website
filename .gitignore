@@ -50,3 +50,7 @@ package-lock.json
 
 # github-worker writes a per-PR maven.repo.local here; it must never be committed
 .mvn/maven.config
+
+# Python bytecode from the page generator and its tests
+__pycache__/
+*.pyc

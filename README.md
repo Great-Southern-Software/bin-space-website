@@ -24,6 +24,9 @@ the output is committed - the build has no network dependency, and a coverage
 change shows up in review rather than appearing silently at deploy. Re-run it
 when coverage changes, or to widen the tranche (`TRANCHE` in the script).
 
+The generator's own logic - slugs, source-origin stripping, escaping - is
+covered by `python3 -m unittest discover -s tools`.
+
 Nothing about a collection date is written into the HTML. The council, its
 provenance and its population are baked in; the day itself is looked up in the
 browser against `api.bin-space.app`, so a page cannot fossilise a schedule.

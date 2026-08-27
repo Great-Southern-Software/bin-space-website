@@ -9,13 +9,14 @@ it works for the zone-keyed councils too, where a suburb has no single answer.
 
 Run it again whenever coverage changes:
 
-    python3 bin/generate-bin-day-pages.py
+    python3 tools/generate-bin-day-pages.py
 
 It rewrites content/bin-day/ and public/sitemap.xml, and commits are expected -
 the output is checked in so the build has no network dependency and so a
 coverage change is visible in review rather than appearing silently at deploy.
 """
 
+import html
 import json
 import os
 import re
@@ -61,6 +62,17 @@ STATIC_PAGES = [
 def get(path):
     with urllib.request.urlopen(API + path, timeout=120) as r:
         return json.load(r)
+
+
+def escape(text):
+    """HTML-escape a registry value before it is spliced into prose.
+
+    Every value here comes from our own coverage API today, so nothing is
+    hostile. It is still the one place registry data reaches raw HTML with no
+    other guard: a council named "A & B" would produce malformed markup that
+    renders wrong rather than failing, and nothing downstream would notice.
+    """
+    return html.escape(str(text), quote=True)
 
 
 def display_name(council_name):
@@ -112,7 +124,7 @@ def provenance(council, transcription, origin):
     Everything in it is already published on /coverage/ - this states it in
     words on the page a resident actually lands on.
     """
-    name = display_name(council["council"])
+    name = escape(display_name(council["council"]))
     lines = []
 
     if transcription:
@@ -139,7 +151,7 @@ def provenance(council, transcription, origin):
             "Every council we cover is listed the same way, with the document or "
             "service each schedule came from, on our "
             '<a href="/coverage/">coverage and data sources</a> page.</p>'
-            % (origin, origin.split("://", 1)[1])
+            % (escape(origin), escape(origin.split("://", 1)[1]))
         )
     else:
         lines.append(
@@ -203,7 +215,7 @@ def index_html(published, covered, share):
     for council, url in published:
         items.append(
             '    <li><a href="%s"><strong>%s</strong><span>%s</span></a></li>'
-            % (url, display_name(council["council"]), council["state"])
+            % (url, escape(display_name(council["council"])), escape(council["state"]))
         )
     return """---
 title: "Bin collection days by council"

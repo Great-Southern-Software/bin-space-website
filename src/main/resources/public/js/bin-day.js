@@ -73,8 +73,25 @@
     // A changed suburb makes any showing answer belong to a different address,
     // so it goes rather than sitting there looking current.
     clear(result);
+
+    // Someone who typed the street first and then corrected the suburb has
+    // left real text in the street field. Without this the corrected suburb
+    // produces nothing until they nudge that field, because only its own input
+    // event asks for suggestions.
     lastQuery = '';
+    if (timer) clearTimeout(timer);
+    if (ready && streetInput.value.trim().length >= 2) {
+      timer = setTimeout(suggest, 250);
+    }
   });
+
+  // Two text inputs and no submit button: the spec says Enter should not
+  // implicitly submit, but nothing here needs that nuance to hold in every
+  // browser - a navigation would throw the answer away.
+  var form = document.getElementById('binday-form');
+  if (form) {
+    form.addEventListener('submit', function (e) { e.preventDefault(); });
+  }
 
   /* ---- step two: type-ahead over the addresses in that postcode --------- */
 
