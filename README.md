@@ -10,6 +10,32 @@ Static marketing site for [Bin Space](https://www.bin-space.app), built with
 - `src/main/resources/templates/layouts/` - Qute layouts (`default.html`)
 - `src/main/resources/public/` - static assets served as-is (CSS, images, `CNAME`)
 
+## Bin day pages
+
+`/bin-day/<state>/<council>/` is one static page per council, generated from the
+coverage API:
+
+```shell
+python3 tools/generate-bin-day-pages.py
+```
+
+That rewrites `src/main/resources/content/bin-day/` and `public/sitemap.xml`, and
+the output is committed - the build has no network dependency, and a coverage
+change shows up in review rather than appearing silently at deploy. Re-run it
+when coverage changes, or to widen the tranche (`TRANCHE` in the script).
+
+The generator's own logic - slugs, source-origin stripping, escaping - is
+covered by `python3 -m unittest discover -s tools`.
+
+Nothing about a collection date is written into the HTML. The council, its
+provenance and its population are baked in; the day itself is looked up in the
+browser against `api.bin-space.app`, so a page cannot fossilise a schedule.
+
+That API allows CORS from `https://www.bin-space.app` only, so **the lookup
+cannot be exercised against real data from localhost** - a locally served page
+will show the form and fail the fetch. Test the widget by stubbing `window.fetch`,
+or on the deployed site.
+
 ## Local dev
 
 ```shell

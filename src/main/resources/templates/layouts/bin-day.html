@@ -1,0 +1,82 @@
+---
+layout: default
+---
+{@io.quarkiverse.roq.frontmatter.runtime.model.Page page}
+{@io.quarkiverse.roq.frontmatter.runtime.model.Site site}
+{#let council=page.data('name') state=page.data('state')}
+<section class="legal-page binday-page"
+         data-council="{page.data('council')}" data-state="{state}">
+    <h1>Bin day in {council}, {state}</h1>
+    <p class="legal-meta">Look up your street below. We read {council}'s own published
+       schedule - we don't guess.</p>
+
+    <p>Bin Space tells {council} residents which bins go out and when. Collection days
+       vary across the council, so the only honest answer is one for your actual
+       address. Put yours in and you'll get this week's collection, straight from the
+       schedule the council publishes.</p>
+
+    <!-- The form is the whole point of the page: this council resolves schedules per
+         address, so nothing above it can state a day without inventing one. -->
+    <div class="binday-lookup">
+        <h2 id="binday-find">Find your bin day</h2>
+        <noscript>
+            <p class="binday-error">This lookup needs JavaScript. You can also get your
+               bin days - and a reminder the evening before - in the
+               <a href="{site.url('/apps/')}">Bin Space app</a>.</p>
+        </noscript>
+
+        <p class="binday-help" id="binday-where-help">{council} covers more than one
+           suburb, so we need to know which part of it you're in - your suburb or your
+           postcode, whichever comes to mind. Then a few letters of your street, and pick
+           your address from the list.</p>
+
+        <form class="binday-form" id="binday-form" autocomplete="off">
+            <label class="binday-field">
+                <span class="cov-label">Suburb or postcode</span>
+                <input type="text" id="binday-where" placeholder="e.g. Seaford, or 3199"
+                       aria-describedby="binday-where-help">
+            </label>
+            <label class="binday-field binday-field-wide">
+                <span class="cov-label">Street</span>
+                <input type="text" id="binday-street" placeholder="Start typing your street"
+                       aria-controls="binday-suggestions" aria-expanded="false"
+                       role="combobox" aria-autocomplete="list" disabled>
+            </label>
+        </form>
+
+        <ul class="binday-suggestions" id="binday-suggestions" role="listbox"
+            aria-label="Matching addresses" hidden></ul>
+
+        <div class="binday-result" id="binday-result" aria-live="polite"></div>
+    </div>
+
+    <!-- Deliberately below the answer. Someone who arrived from a search wants the day,
+         not a download; the app earns the install by offering the thing a web page
+         cannot - a reminder the evening before. -->
+    <aside class="binday-app">
+        <img class="binday-app-icon" src="{site.url('/images/icon-full.png')}" alt="">
+        <div>
+            <h2>Get reminded the night before</h2>
+            <p>A web page can only answer when you come and ask it. The Bin Space app
+               remembers your address and nudges you at 4pm the evening before, so the
+               bin goes out while you're still thinking about it. Free, and it covers
+               {council} the same way this page does.</p>
+            <p><a class="btn btn-primary btn-small" href="{site.url('/apps/')}">Get the app</a></p>
+        </div>
+    </aside>
+
+    {#insert /}
+
+    <h2>If we've got it wrong</h2>
+    <p>A wrong day is a bug we want to fix. Tell us in the app - there's a
+       <em>Report a wrong schedule</em> option on your schedule screen - or email
+       <a href="mailto:support@bin-space.app">support@bin-space.app</a>. Reports are how
+       we find out a council changed its calendar.</p>
+
+    <p class="fine-print">Bin Space is not affiliated with any council. Council data
+       belongs to the councils that publish it; we read their published schedules to tell
+       residents when their bins go out, and we say where every schedule came from on our
+       <a href="{site.url('/coverage/')}">coverage and data sources</a> page.</p>
+</section>
+{/let}
+<script src="{site.url('/js/bin-day.js')}" defer></script>
