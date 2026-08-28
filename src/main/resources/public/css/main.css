@@ -600,6 +600,90 @@ a { color: var(--text); }
 .legal-page ul { padding-left: 22px; }
 .legal-page li { margin-bottom: 10px; }
 
+/* --- for councils: the official-app mock ---------------------------------- */
+/* Two panels of the same idea - the logo on the schedule, and the page behind
+   it - so they sit side by side once there is room and stack before they get
+   too narrow to read. */
+.council-mock {
+    display: grid;
+    gap: 14px;
+    margin: 22px 0 10px;
+}
+@media (min-width: 560px) {
+    .council-mock { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+.council-mock .mock-card { padding: 16px; }
+.council-mock-schedule {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 14px;
+    align-items: center;
+}
+.council-mock-schedule .mock-bins { gap: 6px; }
+.council-mock-schedule .bin-pill { font-size: 0.78rem; padding: 4px 10px 4px 8px; }
+
+/* The strip is the whole pitch: it reads as part of the schedule, not as an ad
+   pasted over it, so it sits inside the card above its own hairline. */
+.council-strip {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+}
+/* A square placeholder rather than the words on the line: a council reading
+   this has to see where their mark goes, and inline text reads as copy. */
+.council-logo-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border-radius: 9px;
+    border: 1px dashed var(--line);
+    background: var(--tint);
+    color: var(--muted);
+    font-size: 0.6rem;
+    line-height: 1.15;
+    padding: 3px;
+}
+.council-logo-lg { width: 46px; height: 46px; font-size: 0.64rem; margin-bottom: 10px; }
+.council-strip-text { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+.council-strip-text strong { font-size: 0.88rem; }
+.council-strip-text small { font-size: 0.76rem; color: var(--muted); }
+.council-chev { margin-left: auto; color: var(--muted); font-size: 1.2rem; }
+
+.council-mock-page { display: flex; flex-direction: column; align-items: flex-start; }
+.council-page-name { font-size: 0.95rem; }
+.council-page-blurb {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 4px 0 12px;
+}
+/* Typed as ul.* on purpose: .legal-page ul sets the bullet indent, and would
+   otherwise out-specify a bare class here. */
+ul.council-link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+ul.council-link-list li {
+    font-size: 0.8rem;
+    background: var(--tint);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 8px 10px;
+    margin: 0;
+}
+.council-mock-caption { font-size: 0.88rem; color: var(--muted); }
+
 /* --- footer --- */
 .site-footer {
     border-top: 1px solid var(--line);
