@@ -36,6 +36,35 @@ cannot be exercised against real data from localhost** - a locally served page
 will show the form and fail the fetch. Test the widget by stubbing `window.fetch`,
 or on the deployed site.
 
+## Checking a stylesheet change
+
+`main.css` is one sheet for the whole site, so a change to it touches every
+page and a line diff is a poor guide to what actually moved:
+
+```shell
+python3 tools/css-rule-diff.py                 # origin/main vs the working tree
+python3 tools/css-rule-diff.py <ref-a> <ref-b> # any two revisions
+python3 tools/css-rule-diff.py --orphans       # classes with no rule, rules with no class
+```
+
+It resolves both versions down to `(selector, property)` pairs - including
+inside `@media`, which a bare selector comparison would flatten - and reports
+what one side has and the other does not, plus any value that changed under a
+selector that survived. Each loss is ranked by whether the markup still emits
+the class: `LIVE` is the shape a regression takes, `RETIRED` is a deliberate
+removal, `DYNAMIC` is a class built by concatenation that it cannot decide.
+It exits non-zero when anything `LIVE` was dropped.
+
+Run it on any commit that rewrites rather than edits the stylesheet. Two have
+now deleted live rules in passing - `ff8ff6a` rebased the sheet on a stale copy
+and lost the whole `.council-*` block along with `.legal-page h3`, and the
+repair for it, `0f9c6d8`, took the same stale base and restored everything
+except those two. Both are visible in one run.
+
+A `LIVE` loss is a lead, not a verdict: a broader rule may have taken over, the
+way `.site-nav a { display: none }` superseded `.site-nav .nav-secondary`. Read
+the pair before believing it either way.
+
 ## Local dev
 
 ```shell
