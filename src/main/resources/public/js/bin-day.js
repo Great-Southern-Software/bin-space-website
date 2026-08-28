@@ -205,6 +205,13 @@
       case 'NOT_COVERED':
         return 'We do not have a schedule for that address yet. Our coverage page '
           + 'lists every council we know about, including the gaps.';
+      case 'NOT_SERVICED':
+        // The council found the property and told us it does not collect
+        // there. That is an answer, not a failure, and it is the one case here
+        // where nothing is wrong with the address or with us.
+        return council + ' does not run a kerbside collection at that address. That '
+          + 'usually means the building is on a commercial waste service, arranged by '
+          + 'the owner or body corporate rather than the council.';
       case 'ADDRESS_NOT_FOUND':
         return council + '’s schedule does not list that address. That is sometimes '
           + 'correct - not every property is on a kerbside run - and sometimes it is a '
@@ -223,13 +230,19 @@
 
   // A dead end is the most useful moment to hear from someone: they have an
   // address we cannot answer for, which is exactly what we need to fix it.
-  function reportLink(row) {
+  function reportLink(row, code) {
+    var serviced = code === 'NOT_SERVICED';
     var subject = 'Bin day lookup - ' + (pageCouncil || 'unknown council');
     var body = 'Hi Bin Space,\n\nThe bin day page for '
-      + (pageCouncil || 'this council') + ' could not answer for:\n\n'
+      + (pageCouncil || 'this council')
+      + (serviced ? ' says there is no kerbside collection at:\n\n'
+                  : ' could not answer for:\n\n')
       + (row && row.label ? row.label : '(address)')
       + '\n\nMy bins do go out. Here is the day, if I know it: ';
-    var a = el('a', null, 'Tell us about this address');
+    // Different words for the two cases: someone told there is no collection
+    // has been given an answer, and only needs us if that answer is wrong.
+    var a = el('a', null, serviced ? 'My bins do get collected - tell us'
+                                   : 'Tell us about this address');
     a.href = 'mailto:support@bin-space.app?subject=' + encodeURIComponent(subject)
       + '&body=' + encodeURIComponent(body);
     var p = el('p');
@@ -249,8 +262,9 @@
       a.href = '/coverage/';
       p.appendChild(a);
       result.appendChild(p);
-    } else if (code === 'ADDRESS_NOT_FOUND' || code === 'AMBIGUOUS_ADDRESS') {
-      result.appendChild(reportLink(row));
+    } else if (code === 'ADDRESS_NOT_FOUND' || code === 'AMBIGUOUS_ADDRESS'
+        || code === 'NOT_SERVICED') {
+      result.appendChild(reportLink(row, code));
     }
   }
 
