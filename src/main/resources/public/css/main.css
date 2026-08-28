@@ -596,7 +596,12 @@ a { color: var(--text); }
 .legal-page h1 { font-size: clamp(1.6rem, 4.4vw, 2.2rem); letter-spacing: -0.3px; }
 .legal-meta { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
 .legal-page h2 { font-size: 1.15rem; margin: 36px 0 10px; }
-/* Unrelated fix: support.html has bare h3s with no prior style, inverting the heading hierarchy under h2 */
+/* Load-bearing, despite looking like a nicety. h1, h2, h3 above sets margin: 0,
+   and the browser default size is 1.17em - LARGER than .legal-page h2 at
+   1.15rem. Without this line every h3 on /support/ and /for-councils/ loses its
+   spacing and outranks the h2 it sits under. Deleted with the .council-* block
+   by ff8ff6a and missed again by the repair, 0f9c6d8; tools/css-rule-diff.py
+   exists to catch the next one. */
 .legal-page h3 { font-size: 1rem; margin: 26px 0 8px; }
 .legal-page p, .legal-page li { line-height: 1.65; }
 .legal-page ul { padding-left: 22px; }
