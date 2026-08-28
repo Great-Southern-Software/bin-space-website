@@ -253,7 +253,9 @@
   function showError(body, row) {
     var code = body && body.error;
     clear(result);
-    result.appendChild(el('p', 'binday-error',
+    // NOT_SERVICED is an answer, not a failure - it gets the neutral style so
+    // it doesn't read as an alarm alongside the genuine error codes below.
+    result.appendChild(el('p', code === 'NOT_SERVICED' ? 'binday-info' : 'binday-error',
       messageFor(code) || (body && body.message)
         || 'Something went wrong looking that up. Please try again.'));
     if (code === 'NOT_COVERED') {
