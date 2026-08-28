@@ -834,6 +834,7 @@ a { color: var(--text); }
 .binday-bins { display: flex; flex-wrap: wrap; gap: 8px; }
 .binday-loading { color: var(--muted); }
 .binday-error { color: var(--terracotta-deep); }
+.binday-info { color: var(--text); }
 .binday-note {
     color: var(--muted);
     font-size: .88rem;
